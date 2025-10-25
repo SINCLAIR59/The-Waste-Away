@@ -1540,10 +1540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4732fc7c4bc395c45afb8f904331e574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerScript
-  MoveX: 0
-  MoveY: 0
   Speed: 10
-  isCollider: 0
 --- !u!212 &1150408307
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1652,7 +1649,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 5, y: 4.9}
+  m_Size: {x: 2.5, y: 2.5}
   m_Direction: 0
 --- !u!1001 &1221169908
 PrefabInstance:
