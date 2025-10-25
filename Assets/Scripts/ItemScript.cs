@@ -3,6 +3,10 @@
 public class ItemScript : MonoBehaviour
 {
     public GameObject interactUI; // UI ปุ่ม E
+    public float weight = 1f;     // น้ำหนักต่อชิ้น
+    public int quantity = 1;      // จำนวนชิ้น
+
+    private Inventory playerInventory;
 
     void Start()
     {
@@ -12,6 +16,13 @@ public class ItemScript : MonoBehaviour
             interactUI.transform.SetParent(null);
             interactUI.SetActive(false);
         }
+
+        // หา Player และ Inventory
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player == null)
+            return;
+
+        playerInventory = player.GetComponent<Inventory>();
     }
 
     // ฟังก์ชันให้ Player เรียกเพื่อโชว์หรือซ่อน UI
@@ -24,9 +35,18 @@ public class ItemScript : MonoBehaviour
     // ฟังก์ชันให้ Player เรียกเพื่อเก็บ Item
     public void PickUpItem()
     {
-        Debug.Log($"เก็บ {name} แล้ว!");
-        if (interactUI != null)
-            interactUI.SetActive(false);
-        Destroy(gameObject);
+        if (playerInventory == null)
+            return;
+
+        Item newItem = new Item(name, weight, quantity);
+
+        bool added = playerInventory.AddItem(newItem);
+
+        if (added)
+        {
+            if (interactUI != null)
+                interactUI.SetActive(false);
+            Destroy(gameObject);
+        }
     }
 }
