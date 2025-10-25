@@ -142,6 +142,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemScript
   interactUI: {fileID: 4723397358126597678}
+  weight: 0.01
+  quantity: 1
 --- !u!1 &4723397358126597678
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,7 +3,7 @@
 public class ItemScript : MonoBehaviour
 {
     public GameObject interactUI; // UI ปุ่ม E
-    public float weight = 1f;     // น้ำหนักต่อชิ้น
+    public float weight = 0.05f;     // น้ำหนักต่อชิ้น
     public int quantity = 1;      // จำนวนชิ้น
 
     private Inventory playerInventory;
