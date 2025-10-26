@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -8,10 +9,12 @@ public class PlayerScript : MonoBehaviour
     public float Monney;
     private List<ItemScript> itemsInRange = new List<ItemScript>();
     private ItemScript nearestItem;
+    private SpriteRenderer spriteRenderer;
 
     void Start()
     {
         RB = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -20,6 +23,14 @@ public class PlayerScript : MonoBehaviour
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
         RB.linearVelocity = new Vector2(moveX * Speed, moveY * Speed);
+
+        if (spriteRenderer != null)
+        {
+            if (moveX < 0)
+                spriteRenderer.flipX = true;
+            else if (moveX > 0)
+                spriteRenderer.flipX = false;
+        }
 
         // หา Item ใกล้สุด
         UpdateNearestItem();
