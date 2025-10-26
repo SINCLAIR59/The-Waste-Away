@@ -5,7 +5,7 @@ public class PlayerScript : MonoBehaviour
 {
     public float Speed;
     private Rigidbody2D RB;
-
+    public float Monney;
     private List<ItemScript> itemsInRange = new List<ItemScript>();
     private ItemScript nearestItem;
 
