@@ -323,8 +323,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\"E\" \u0E40\u0E1E\u0E37\u0E48\u0E2D\u0E40\u0E01\u0E47\u0E1A"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 16a5ba9ca48b9f64d95391b64eeb0748, type: 2}
-  m_sharedMaterial: {fileID: 9102147085690997091, guid: 16a5ba9ca48b9f64d95391b64eeb0748, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ad9dead7e088ab942bce00c840b6e3a3, type: 2}
+  m_sharedMaterial: {fileID: -879814538335506559, guid: ad9dead7e088ab942bce00c840b6e3a3, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -348,8 +348,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.5
-  m_fontSizeBase: 0.5
+  m_fontSize: 1
+  m_fontSizeBase: 1
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

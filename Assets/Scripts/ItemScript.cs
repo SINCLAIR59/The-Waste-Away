@@ -47,6 +47,7 @@ public class ItemScript : MonoBehaviour
             if (interactUI != null)
                 interactUI.SetActive(false);
             Destroy(gameObject);
+            Destroy(interactUI);
         }
     }
 }
