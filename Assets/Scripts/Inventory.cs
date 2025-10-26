@@ -21,6 +21,10 @@ public float CurrentWeight()
         return total;
     }
 
+    private void Start()
+    {
+        WeightUI.text = "น้ำนัก " + CurrentWeight().ToString("F2") + "/" + maxWeight + " กิโล";
+    }
     public bool AddItem(Item newItem)
     {
         float newTotalWeight = CurrentWeight() + newItem.TotalWeight();
