@@ -1889,7 +1889,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerScript
   Speed: 10
-  Monney: 0
+  Money: 0
 --- !u!212 &1150408307
 SpriteRenderer:
   m_ObjectHideFlags: 0

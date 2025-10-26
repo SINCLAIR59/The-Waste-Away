@@ -1,60 +1,70 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
+[RequireComponent(typeof(Rigidbody2D), typeof(SpriteRenderer))]
 public class PlayerScript : MonoBehaviour
 {
-    public float Speed;
-    private Rigidbody2D RB;
-    public float Monney;
-    private List<ItemScript> itemsInRange = new List<ItemScript>();
-    private ItemScript nearestItem;
+    [Header("Movement Settings")]
+    public float Speed = 5f;
+
+    [Header("Player Stats")]
+    public float Money = 0f;
+
+    private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
+    private readonly List<ItemScript> itemsInRange = new List<ItemScript>();
+    private ItemScript nearestItem;
+
+    private Vector2 moveInput;
 
     void Start()
     {
-        RB = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
-        // Movement
-        float moveX = Input.GetAxis("Horizontal");
-        float moveY = Input.GetAxis("Vertical");
-        RB.linearVelocity = new Vector2(moveX * Speed, moveY * Speed);
+        // รับ input การเคลื่อนไหว
+        moveInput.x = Input.GetAxisRaw("Horizontal");
+        moveInput.y = Input.GetAxisRaw("Vertical");
 
-        if (spriteRenderer != null)
+        // พลิกตัวละครตามทิศทาง
+        if (spriteRenderer)
         {
-            if (moveX < 0)
-                spriteRenderer.flipX = true;
-            else if (moveX > 0)
-                spriteRenderer.flipX = false;
+            if (moveInput.x != 0)
+                spriteRenderer.flipX = moveInput.x < 0;
         }
 
-        // หา Item ใกล้สุด
+        // หา item ใกล้สุด
         UpdateNearestItem();
 
-        // กด E เก็บ Item ใกล้สุด
+        // กด E เก็บของ
         if (nearestItem != null && Input.GetKeyDown(KeyCode.E))
         {
             nearestItem.PickUpItem();
-            nearestItem = null; // ป้องกันเรียกซ้ำ
+            nearestItem = null;
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D target)
+    void FixedUpdate()
     {
-        ItemScript item = target.GetComponent<ItemScript>();
+        // เคลื่อนที่ (ใช้ใน FixedUpdate เพื่อความสมูท)
+        rb.linearVelocity = moveInput.normalized * Speed;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        ItemScript item = other.GetComponent<ItemScript>();
         if (item != null && !itemsInRange.Contains(item))
         {
             itemsInRange.Add(item);
         }
     }
 
-    private void OnTriggerExit2D(Collider2D target)
+    private void OnTriggerExit2D(Collider2D other)
     {
-        ItemScript item = target.GetComponent<ItemScript>();
+        ItemScript item = other.GetComponent<ItemScript>();
         if (item != null)
         {
             itemsInRange.Remove(item);
@@ -66,17 +76,27 @@ public class PlayerScript : MonoBehaviour
         float nearestDist = Mathf.Infinity;
         ItemScript closest = null;
 
-        foreach (var item in itemsInRange)
+        // ล้าง item ที่ถูกลบ (destroyed)
+        for (int i = itemsInRange.Count - 1; i >= 0; i--)
         {
-            float dist = Vector2.Distance(transform.position, item.transform.position);
+            if (itemsInRange[i] == null)
+            {
+                itemsInRange.RemoveAt(i);
+                continue;
+            }
+
+            float dist = Vector2.Distance(transform.position, itemsInRange[i].transform.position);
             if (dist < nearestDist)
             {
                 nearestDist = dist;
-                closest = item;
+                closest = itemsInRange[i];
+
+                if (nearestDist <= 0.05f) // ถ้าอยู่ใกล้มากๆ ก็หยุดหาได้เลย
+                    break;
             }
         }
 
-        // อัปเดต UI เฉพาะ Item ใกล้สุด
+        // อัปเดต UI เฉพาะ item ที่ใกล้สุด
         if (nearestItem != closest)
         {
             if (nearestItem != null)

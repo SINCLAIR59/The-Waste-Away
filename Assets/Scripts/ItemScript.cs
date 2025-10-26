@@ -2,52 +2,78 @@
 
 public class ItemScript : MonoBehaviour
 {
-    public GameObject interactUI; // UI ปุ่ม E
+    [Header("Item Settings")]
     public string ItemName;
-    public float weight = 0.05f,Price;     // น้ำหนักต่อชิ้น//ราคาต่อชิ้น
-    public int quantity = 1;      // จำนวนชิ้น
+    public float weight = 0.05f;
+    public float Price;
+    public int quantity = 1;
+
+    [Header("UI Settings")]
+    public GameObject interactUI; // UI ปุ่ม E
+
     private Inventory playerInventory;
+    private bool isPickedUp = false; // ป้องกันการเก็บซ้ำ
 
     void Start()
     {
-        // ถ้า UI เป็น Child ของ Item ให้ตัดออกจาก Parent
+        // แยก UI ออกจาก Item เพื่อไม่ให้หายไปพร้อมกัน
         if (interactUI != null)
         {
-            interactUI.transform.SetParent(null);
+            interactUI.transform.SetParent(null, true);
             interactUI.SetActive(false);
         }
 
-        // หา Player และ Inventory
+        // หา Player และ Inventory อย่างปลอดภัย
         GameObject player = GameObject.FindWithTag("Player");
-        if (player == null)
-            return;
-
-        playerInventory = player.GetComponent<Inventory>();
+        if (player != null)
+        {
+            playerInventory = player.GetComponent<Inventory>();
+        }
+        else
+        {
+            Debug.LogWarning("Player not found! (ItemScript)");
+        }
     }
 
-    // ฟังก์ชันให้ Player เรียกเพื่อโชว์หรือซ่อน UI
+    /// <summary>
+    /// โชว์หรือซ่อน UI "กด E เก็บของ"
+    /// </summary>
     public void ShowUI(bool state)
     {
-        if (interactUI != null)
+        if (interactUI != null && !isPickedUp)
+        {
             interactUI.SetActive(state);
+        }
     }
 
-    // ฟังก์ชันให้ Player เรียกเพื่อเก็บ Item
+    /// <summary>
+    /// ฟังก์ชันสำหรับให้ Player เก็บ Item
+    /// </summary>
     public void PickUpItem()
     {
+        if (isPickedUp) return; // ป้องกันการเก็บซ้ำ
         if (playerInventory == null)
+        {
+            Debug.LogWarning("Player Inventory not found! (ItemScript)");
             return;
+        }
 
+        // สร้าง Item object
         Item newItem = new Item(ItemName, weight, quantity);
 
+        // พยายามเพิ่มลง Inventory
         bool added = playerInventory.AddItem(newItem);
+        if (!added) return;
 
-        if (added)
+        isPickedUp = true;
+
+        // ซ่อน UI ก่อนลบ object
+        if (interactUI != null)
         {
-            if (interactUI != null)
-                interactUI.SetActive(false);
-            Destroy(gameObject);
-            Destroy(interactUI);
+            interactUI.SetActive(false);
+            Destroy(interactUI, 0.05f); // หน่วงเล็กน้อยให้แน่ใจว่า UI ปิดแล้ว
         }
+
+        Destroy(gameObject);
     }
 }
