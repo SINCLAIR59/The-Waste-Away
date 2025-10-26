@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
+using TMPro;
+using UnityEditor.UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
     public float maxWeight = 10f; // 10 kg
     private List<Item> items = new List<Item>();
+    public TMP_Text WeightUI;
 
-    public float CurrentWeight()
+
+public float CurrentWeight()
     {
         float total = 0;
         foreach (Item item in items)
@@ -32,6 +37,7 @@ public class Inventory : MonoBehaviour
                 items.Add(newItem);
             }
             Debug.Log($"{newItem.itemName} added. Current weight: {CurrentWeight()}kg");
+            WeightUI.text = "น้ำนัก "+ CurrentWeight().ToString("F2")+"/"+ maxWeight+" กิโล";
             return true;
         }
         else

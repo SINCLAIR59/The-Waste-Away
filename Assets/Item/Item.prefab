@@ -144,6 +144,7 @@ MonoBehaviour:
   interactUI: {fileID: 4723397358126597678}
   weight: 0.01
   quantity: 1
+  ItemName: qwerty
 --- !u!1 &4723397358126597678
 GameObject:
   m_ObjectHideFlags: 0

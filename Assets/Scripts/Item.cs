@@ -4,7 +4,6 @@ public class Item
     public string itemName;
     public float weight;
     public int quantity;
-
     public Item(string name, float w, int qty)
     {
         itemName = name;

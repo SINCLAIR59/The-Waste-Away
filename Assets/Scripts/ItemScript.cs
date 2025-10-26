@@ -3,9 +3,9 @@
 public class ItemScript : MonoBehaviour
 {
     public GameObject interactUI; // UI ปุ่ม E
+    public string ItemName;
     public float weight = 0.05f;     // น้ำหนักต่อชิ้น
     public int quantity = 1;      // จำนวนชิ้น
-
     private Inventory playerInventory;
 
     void Start()
@@ -38,7 +38,7 @@ public class ItemScript : MonoBehaviour
         if (playerInventory == null)
             return;
 
-        Item newItem = new Item(name, weight, quantity);
+        Item newItem = new Item(ItemName, weight, quantity);
 
         bool added = playerInventory.AddItem(newItem);
 
