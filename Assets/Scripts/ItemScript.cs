@@ -16,14 +16,11 @@ public class ItemScript : MonoBehaviour
 
     void Start()
     {
-        // แยก UI ออกจาก Item เพื่อไม่ให้หายไปพร้อมกัน
-        if (interactUI != null)
-        {
-            interactUI.transform.SetParent(null, true);
-            interactUI.SetActive(false);
-        }
+        // แยก UI ออกจาก Item
+        interactUI?.transform.SetParent(null, true);
+        interactUI?.SetActive(false);
 
-        // หา Player และ Inventory อย่างปลอดภัย
+        // หา Inventory ของ Player
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
         {
@@ -35,45 +32,28 @@ public class ItemScript : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// โชว์หรือซ่อน UI "กด E เก็บของ"
-    /// </summary>
+    /// <summary>โชว์หรือซ่อน UI "กด E เก็บของ"</summary>
     public void ShowUI(bool state)
     {
-        if (interactUI != null && !isPickedUp)
-        {
-            interactUI.SetActive(state);
-        }
+        if (isPickedUp) return;
+        interactUI?.SetActive(state);
     }
 
-    /// <summary>
-    /// ฟังก์ชันสำหรับให้ Player เก็บ Item
-    /// </summary>
+    /// <summary>ให้ Player เก็บ Item</summary>
     public void PickUpItem()
     {
-        if (isPickedUp) return; // ป้องกันการเก็บซ้ำ
-        if (playerInventory == null)
-        {
-            Debug.LogWarning("Player Inventory not found! (ItemScript)");
-            return;
-        }
+        if (isPickedUp || playerInventory == null) return;
 
-        // สร้าง Item object
-        Item newItem = new Item(ItemName, weight, quantity);
+        // สร้าง Item object พร้อมราคา
+        Item newItem = new Item(ItemName, weight, Price, quantity);
 
-        // พยายามเพิ่มลง Inventory
-        bool added = playerInventory.AddItem(newItem);
-        if (!added) return;
+        if (!playerInventory.AddItem(newItem)) return;
 
         isPickedUp = true;
 
-        // ซ่อน UI ก่อนลบ object
-        if (interactUI != null)
-        {
-            interactUI.SetActive(false);
-            Destroy(interactUI, 0.05f); // หน่วงเล็กน้อยให้แน่ใจว่า UI ปิดแล้ว
-        }
-
+        interactUI?.SetActive(false);
+        Destroy(interactUI, 0.05f);
         Destroy(gameObject);
     }
+
 }

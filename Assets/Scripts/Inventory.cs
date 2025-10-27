@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using TMPro;
-using UnityEditor.UI;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
+    [Header("Inventory Settings")]
     public float maxWeight = 10f; // 10 kg
-    private List<Item> items = new List<Item>();
     public TMP_Text WeightUI;
 
+    private readonly List<Item> items = new List<Item>();
 
-public float CurrentWeight()
+    // คำนวณน้ำหนักรวม
+    public float CurrentWeight()
     {
-        float total = 0;
+        float total = 0f;
         foreach (Item item in items)
         {
             total += item.TotalWeight();
@@ -23,42 +23,81 @@ public float CurrentWeight()
 
     private void Start()
     {
-        WeightUI.text = "น้ำนัก " + CurrentWeight().ToString("F2") + "/" + maxWeight + " กิโล";
+        UpdateWeightUI();
     }
+
+    public void UpdateWeightUI()
+    {
+        if (WeightUI != null)
+            WeightUI.text = $"น้ำหนัก {CurrentWeight():F2}/{maxWeight} กิโล";
+    }
+
     public bool AddItem(Item newItem)
     {
+        if (newItem == null) return false;
+
         float newTotalWeight = CurrentWeight() + newItem.TotalWeight();
-        if (newTotalWeight <= maxWeight)
+        if (newTotalWeight > maxWeight)
         {
-            // ถ้าเจอไอเทมเดียวกันอยู่แล้ว ให้เพิ่มจำนวน
-            Item existingItem = items.Find(i => i.itemName == newItem.itemName);
-            if (existingItem != null)
-            {
-                existingItem.quantity += newItem.quantity;
-            }
-            else
-            {
-                items.Add(newItem);
-            }
-            Debug.Log($"{newItem.itemName} added. Current weight: {CurrentWeight()}kg");
-            WeightUI.text = "น้ำนัก "+ CurrentWeight().ToString("F2")+"/"+ maxWeight+" กิโล";
-            return true;
+            Debug.LogWarning($"Cannot add {newItem.itemName}. Exceeds max weight!");
+            return false;
+        }
+
+        // เพิ่มจำนวนถ้ามีอยู่แล้ว
+        Item existingItem = items.Find(i => i.itemName == newItem.itemName);
+        if (existingItem != null)
+        {
+            existingItem.quantity += newItem.quantity;
         }
         else
         {
-            Debug.Log($"Cannot add {newItem.itemName}. Exceeds max weight!");
-            return false;
+            items.Add(newItem);
         }
+
+        Debug.Log($"{newItem.itemName} added. Current weight: {CurrentWeight():F2} kg");
+        UpdateWeightUI();
+        return true;
     }
 
     public void RemoveItem(string itemName, int quantity)
     {
+        if (string.IsNullOrEmpty(itemName) || quantity <= 0) return;
+
         Item item = items.Find(i => i.itemName == itemName);
-        if (item != null)
+        if (item == null) return;
+
+        item.quantity -= quantity;
+        if (item.quantity <= 0)
+            items.Remove(item);
+
+        UpdateWeightUI();
+    }
+
+    public void SellAllItems()
+    {
+        if (items.Count == 0)
         {
-            item.quantity -= quantity;
-            if (item.quantity <= 0)
-                items.Remove(item);
+            Debug.Log("ไม่มีของในกระเป๋าให้ขาย");
+            return;
         }
+
+        float totalWeight = CurrentWeight();
+        float totalPrice = 0f;
+
+        foreach (Item item in items)
+        {
+            totalPrice += item.Price * item.quantity;
+        }
+
+        items.Clear();
+        UpdateWeightUI();
+
+        Debug.Log($"ขายของทั้งหมดแล้ว ได้เงิน {totalPrice:F2} บาท (น้ำหนักที่ขาย {totalWeight:F2} กก.)");
+    }
+
+    public void ClearInventory()
+    {
+        items.Clear();
+        UpdateWeightUI();
     }
 }
