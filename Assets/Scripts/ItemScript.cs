@@ -35,9 +35,13 @@ public class ItemScript : MonoBehaviour
     /// <summary>โชว์หรือซ่อน UI "กด E เก็บของ"</summary>
     public void ShowUI(bool state)
     {
-        if (isPickedUp) return;
-        interactUI?.SetActive(state);
+        if (interactUI == null) return;  // ✅ ป้องกัน null
+        if (this == null) return;        // ✅ ถ้าโดน Destroy ไปแล้ว
+        if (gameObject == null) return;  // ✅ ถ้า object หายแล้ว
+
+        interactUI.SetActive(state);
     }
+
 
     /// <summary>ให้ Player เก็บ Item</summary>
     public void PickUpItem()

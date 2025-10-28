@@ -141,11 +141,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9bee3826d96a6f4bbd4dccb086d393f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemScript
-  interactUI: {fileID: 4723397358126597678}
   ItemName: qwerty
-  weight: 0.01
+  weight: 0.05
   Price: 10
   quantity: 1
+  interactUI: {fileID: 4723397358126597678}
 --- !u!1 &4723397358126597678
 GameObject:
   m_ObjectHideFlags: 0

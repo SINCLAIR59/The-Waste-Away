@@ -86,19 +86,21 @@ public class PlayerScript : MonoBehaviour
 
         // ตรวจ Item
         ItemScript item = other.GetComponent<ItemScript>();
-        if (item != null)
+        if (item != null && item.gameObject != null)
         {
             itemsInRange.Remove(item);
-            item.ShowUI(false);
+            if (item != null) // ✅ double-check ปลอดภัย
+                item.ShowUI(false);
         }
 
         // ตรวจ SellPoint
         SellPoint sellPoint = other.GetComponent<SellPoint>();
-        if (sellPoint != null)
+        if (sellPoint != null && sellPoint.gameObject != null)
         {
             sellPoint.ShowUI(false);
         }
     }
+
 
     private void UpdateNearestItem()
     {
