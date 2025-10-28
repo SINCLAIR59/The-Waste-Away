@@ -5,7 +5,7 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     [Header("Inventory Settings")]
-    public float maxWeight = 10f; // 10 kg
+    public float maxWeight = 10f;
     public TMP_Text WeightUI;
 
 

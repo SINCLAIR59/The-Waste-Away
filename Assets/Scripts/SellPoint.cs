@@ -5,9 +5,6 @@ public class SellPoint : MonoBehaviour
     [Header("UI Settings")]
     public GameObject sellUI; // UI แสดงปุ่ม E หรือข้อความ "กด E เพื่อขาย"
 
-    [Header("Sell Settings")]
-    public float pricePerKg = 10f; // ราคาขายต่อ 1 กิโลกรัม
-
     private bool canSell = false;
     private Inventory playerInventory;
     private PlayerScript player;
@@ -66,7 +63,7 @@ public class SellPoint : MonoBehaviour
         if (playerInventory == null || player == null) return;
 
         float totalPrice = 0f;
-        foreach (Item item in playerInventory.Items) // ✅ property
+        foreach (Item item in playerInventory.Items)
         {
             totalPrice += item.price * item.quantity;
         }

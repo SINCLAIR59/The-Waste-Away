@@ -89,7 +89,7 @@ public class PlayerScript : MonoBehaviour
         if (item != null && item.gameObject != null)
         {
             itemsInRange.Remove(item);
-            if (item != null) // ✅ double-check ปลอดภัย
+            if (item != null)
                 item.ShowUI(false);
         }
 

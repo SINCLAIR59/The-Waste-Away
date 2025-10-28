@@ -9,7 +9,6 @@ public class ItemScript : MonoBehaviour
 
     [Header("Sell Settings")]
     public float pricePerKg = 10f; // ราคาขายต่อ 1 กิโลกรัม
-    //public float Price;
 
     [Header("UI Settings")]
     public GameObject interactUI; // UI ปุ่ม E
@@ -35,18 +34,18 @@ public class ItemScript : MonoBehaviour
         }
     }
 
-    /// <summary>โชว์หรือซ่อน UI "กด E เก็บของ"</summary>
+    ///โชว์หรือซ่อน UI "กด E เก็บของ"
     public void ShowUI(bool state)
     {
-        if (interactUI == null) return;  // ✅ ป้องกัน null
-        if (this == null) return;        // ✅ ถ้าโดน Destroy ไปแล้ว
-        if (gameObject == null) return;  // ✅ ถ้า object หายแล้ว
+        if (interactUI == null) return;
+        if (this == null) return;        
+        if (gameObject == null) return;  
 
         interactUI.SetActive(state);
     }
 
 
-    /// <summary>ให้ Player เก็บ Item</summary>
+    ///ให้ Player เก็บ Item
     public void PickUpItem()
     {
         if (isPickedUp || playerInventory == null) return;
