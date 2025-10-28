@@ -81,7 +81,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 5225380454210030592, guid: 3d9f339c1cb743447b4655bfc29c54c8, type: 3}
   m_Color: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
   m_FlipX: 0
@@ -145,7 +145,6 @@ MonoBehaviour:
   weight: 0.05
   quantity: 1
   pricePerKg: 10
-  Price: 10
   interactUI: {fileID: 4723397358126597678}
 --- !u!1 &4723397358126597678
 GameObject:
