@@ -701,7 +701,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemSpawner
   items:
   - prefab: {fileID: 4089648478987721205, guid: e43ee330a0ec3d6498ae1ff14dfed99a, type: 3}
-    spawnRate: 1
+    spawnRate: 0.01
   spawnArea: {fileID: 1024608130}
   spawnCount: 100
 --- !u!4 &1024608133

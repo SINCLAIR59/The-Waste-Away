@@ -3,20 +3,23 @@
 [System.Serializable]
 public class SpawnItem
 {
-    public GameObject prefab;      // Prefab ของ Item
-    [Range(0f, 1f)]
-    public float spawnRate = 1f;   // โอกาสเกิดของ Item (0.0 - 1.0)
+    [Tooltip("Prefab ของ Item ที่จะสุ่ม")]
+    public GameObject prefab;
+
+    [Range(0f, 1f), Tooltip("อัตราโอกาสเกิด (0.0 - 1.0)")]
+    public float spawnRate = 1f;
 }
 
 public class ItemSpawner : MonoBehaviour
 {
     [Header("ตั้งค่า Item ที่จะสุ่ม")]
-    public SpawnItem[] items;      // รายการ Item ที่จะสุ่มจาก
+    public SpawnItem[] items;
 
-    [Header("พื้นที่สุ่ม (ใช้ GameObject ที่มี SpriteRenderer หรือ Collider2D)")]
-    public GameObject spawnArea;   // กำหนดพื้นที่ที่จะใช้สุ่ม
+    [Header("พื้นที่สุ่ม (SpriteRenderer หรือ Collider2D)")]
+    public GameObject spawnArea;
 
     [Header("จำนวน Item ที่จะสุ่มวาง")]
+    [Min(1)]
     public int spawnCount = 10;
 
     private Vector2 spawnAreaMin;
@@ -24,14 +27,17 @@ public class ItemSpawner : MonoBehaviour
 
     void Start()
     {
-        // คำนวณขนาดของพื้นที่จาก spawnArea
-        if (spawnArea != null)
+        if (items == null || items.Length == 0)
         {
-            CalculateSpawnArea();
+            Debug.LogWarning("⚠️ ไม่มี Item ที่จะสุ่ม (items array ว่าง)");
+            return;
         }
+
+        if (spawnArea != null)
+            CalculateSpawnArea();
         else
         {
-            Debug.LogWarning("⚠️ Spawn Area ยังไม่ได้ตั้งค่า — จะใช้ค่าเริ่มต้นแทน");
+            Debug.LogWarning("⚠️ Spawn Area ยังไม่ได้ตั้งค่า — ใช้ค่าเริ่มต้นแทน");
             spawnAreaMin = new Vector2(-10, -5);
             spawnAreaMax = new Vector2(10, 5);
         }
@@ -39,11 +45,10 @@ public class ItemSpawner : MonoBehaviour
         SpawnItemsOnStart();
     }
 
-    void CalculateSpawnArea()
+    private void CalculateSpawnArea()
     {
-        // 1️⃣ ถ้า spawnArea มี SpriteRenderer
-        SpriteRenderer sr = spawnArea.GetComponent<SpriteRenderer>();
-        if (sr != null)
+        // 🔹 1) ถ้ามี SpriteRenderer
+        if (spawnArea.TryGetComponent<SpriteRenderer>(out var sr))
         {
             Bounds bounds = sr.bounds;
             spawnAreaMin = bounds.min;
@@ -51,9 +56,8 @@ public class ItemSpawner : MonoBehaviour
             return;
         }
 
-        // 2️⃣ ถ้า spawnArea มี Collider2D
-        Collider2D col = spawnArea.GetComponent<Collider2D>();
-        if (col != null)
+        // 🔹 2) ถ้ามี Collider2D
+        if (spawnArea.TryGetComponent<Collider2D>(out var col))
         {
             Bounds bounds = col.bounds;
             spawnAreaMin = bounds.min;
@@ -61,36 +65,47 @@ public class ItemSpawner : MonoBehaviour
             return;
         }
 
-        // 3️⃣ ถ้าไม่มีทั้งคู่ ให้ใช้ตำแหน่งของ spawnArea เป็นจุดกลาง
+        // 🔹 3) ไม่มีทั้งคู่ → ใช้ตำแหน่งกลางจำลอง
         Vector2 center = spawnArea.transform.position;
         spawnAreaMin = center - new Vector2(10, 5);
         spawnAreaMax = center + new Vector2(10, 5);
-
         Debug.LogWarning("⚠️ spawnArea ไม่มี SpriteRenderer หรือ Collider2D ใช้ขอบเขตจำลองแทน");
     }
 
-    void SpawnItemsOnStart()
+    private void SpawnItemsOnStart()
     {
+        int spawned = 0;
+
         for (int i = 0; i < spawnCount; i++)
         {
             GameObject selectedItem = GetRandomItem();
-            if (selectedItem != null)
-            {
-                Vector2 randomPos = new Vector2(
-                    Random.Range(spawnAreaMin.x, spawnAreaMax.x),
-                    Random.Range(spawnAreaMin.y, spawnAreaMax.y)
-                );
+            if (selectedItem == null) continue;
 
-                Instantiate(selectedItem, randomPos, Quaternion.identity);
-            }
+            Vector2 randomPos = new Vector2(
+                Random.Range(spawnAreaMin.x, spawnAreaMax.x),
+                Random.Range(spawnAreaMin.y, spawnAreaMax.y)
+            );
+
+            Instantiate(selectedItem, randomPos, Quaternion.identity);
+            spawned++;
         }
+
+        Debug.Log($"✅ สร้าง Item แล้วทั้งหมด {spawned}/{spawnCount} ชิ้น");
     }
 
-    GameObject GetRandomItem()
+    private GameObject GetRandomItem()
     {
+        if (items.Length == 0) return null;
+
         float totalRate = 0f;
         foreach (var item in items)
-            totalRate += item.spawnRate;
+            totalRate += Mathf.Max(0, item.spawnRate); // ป้องกันค่าติดลบ
+
+        if (totalRate <= 0f)
+        {
+            Debug.LogWarning("⚠️ ค่า spawnRate ของทุก item = 0 ทั้งหมด");
+            return null;
+        }
 
         float randomPoint = Random.value * totalRate;
         float cumulative = 0f;
