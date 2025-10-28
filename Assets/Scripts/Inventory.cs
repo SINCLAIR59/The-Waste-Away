@@ -8,7 +8,10 @@ public class Inventory : MonoBehaviour
     public float maxWeight = 10f; // 10 kg
     public TMP_Text WeightUI;
 
+
     private readonly List<Item> items = new List<Item>();
+    public List<Item> Items => items;
+
 
     // คำนวณน้ำหนักรวม
     public float CurrentWeight()
@@ -86,7 +89,7 @@ public class Inventory : MonoBehaviour
 
         foreach (Item item in items)
         {
-            totalPrice += item.Price * item.quantity;
+            totalPrice += item.price * item.quantity;
         }
 
         items.Clear();

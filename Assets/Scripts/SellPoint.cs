@@ -65,21 +65,19 @@ public class SellPoint : MonoBehaviour
     {
         if (playerInventory == null || player == null) return;
 
-        float totalWeight = playerInventory.CurrentWeight();
-        if (totalWeight <= 0)
+        float totalPrice = 0f;
+        foreach (Item item in playerInventory.Items) // ✅ property
         {
-            Debug.Log("ไม่มีของให้ขาย");
-            return;
+            totalPrice += item.price * item.quantity;
         }
 
-        float totalPrice = totalWeight * pricePerKg;
         player.Money += totalPrice;
         player.UpdateMoneyUI();
 
-        Debug.Log($"ขายของทั้งหมดน้ำหนัก {totalWeight:F2} กิโล ได้เงิน {totalPrice:F2} บาท");
+        Debug.Log($"ขายของทั้งหมดได้ {totalPrice:F2} บาท");
 
-        // เคลียร์ของทั้งหมด และอัปเดต UI
         playerInventory.ClearInventory();
         playerInventory.UpdateWeightUI();
     }
+
 }

@@ -5,8 +5,11 @@ public class ItemScript : MonoBehaviour
     [Header("Item Settings")]
     public string ItemName;
     public float weight = 0.05f;
-    public float Price;
     public int quantity = 1;
+
+    [Header("Sell Settings")]
+    public float pricePerKg = 10f; // ราคาขายต่อ 1 กิโลกรัม
+    //public float Price;
 
     [Header("UI Settings")]
     public GameObject interactUI; // UI ปุ่ม E
@@ -49,7 +52,7 @@ public class ItemScript : MonoBehaviour
         if (isPickedUp || playerInventory == null) return;
 
         // สร้าง Item object พร้อมราคา
-        Item newItem = new Item(ItemName, weight, Price, quantity);
+        Item newItem = new Item(ItemName, weight, pricePerKg, quantity);
 
         if (!playerInventory.AddItem(newItem)) return;
 
