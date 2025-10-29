@@ -2182,7 +2182,7 @@ MonoBehaviour:
   startMinute: 0
   timeText: {fileID: 1113491951}
   globalLight: {fileID: 619394801}
-  minIntensity: 0.25
+  minIntensity: 0.1
   maxIntensity: 1
 --- !u!4 &2105948132
 Transform:

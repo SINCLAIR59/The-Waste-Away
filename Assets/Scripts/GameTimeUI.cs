@@ -44,7 +44,7 @@ public class GameTimeUI : MonoBehaviour
             >= 5 and < 8 => Mathf.Lerp(minIntensity, maxIntensity, (hour - 5f) / 3f),   // เช้า 05:00 - 08:00
             >= 8 and <= 16 => maxIntensity,                                              // กลางวัน
             > 16 and < 20 => Mathf.Lerp(maxIntensity, minIntensity, (hour - 16f) / 4f),  // เย็น 16:00 - 20:00
-            _ => 0.25f                                                                    // กลางคืน 20:00 - 05:00
+            _ => minIntensity                                                                    // กลางคืน 20:00 - 05:00
         };
 
         // ปรับแสงแบบ smooth
