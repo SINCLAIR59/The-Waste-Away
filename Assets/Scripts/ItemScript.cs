@@ -18,9 +18,12 @@ public class ItemScript : MonoBehaviour
 
     void Start()
     {
-        // แยก UI ออกจาก Item
-        interactUI?.transform.SetParent(null, true);
-        interactUI?.SetActive(false);
+        // แยก UI ออกจาก Item เพื่อไม่ให้ถูกทำลายตอน Item ถูกทำลาย
+        if (interactUI != null)
+        {
+            interactUI.transform.SetParent(null, true);
+            interactUI.SetActive(false);
+        }
 
         // หา Inventory ของ Player
         GameObject player = GameObject.FindWithTag("Player");
@@ -30,36 +33,40 @@ public class ItemScript : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Player not found! (ItemScript)");
+            Debug.LogWarning("❌ Player not found! (ItemScript)");
         }
     }
 
-    ///โชว์หรือซ่อน UI "กด E เก็บของ"
+    /// <summary>
+    /// โชว์หรือซ่อน UI "กด E เก็บของ"
+    /// </summary>
     public void ShowUI(bool state)
     {
         if (interactUI == null) return;
-        if (this == null) return;        
-        if (gameObject == null) return;  
-
         interactUI.SetActive(state);
     }
 
-
-    ///ให้ Player เก็บ Item
+    /// <summary>
+    /// ให้ Player เก็บ Item
+    /// </summary>
     public void PickUpItem()
     {
         if (isPickedUp || playerInventory == null) return;
 
-        // สร้าง Item object พร้อมราคา
+        // สร้าง Item object สำหรับ Inventory
         Item newItem = new Item(ItemName, weight, pricePerKg, quantity);
 
         if (!playerInventory.AddItem(newItem)) return;
 
         isPickedUp = true;
 
-        interactUI?.SetActive(false);
-        Destroy(interactUI, 0.05f);
+        // ปิด UI และทำลายตัว Item
+        if (interactUI != null)
+        {
+            interactUI.SetActive(false);
+            Destroy(interactUI, 0.05f);
+        }
+
         Destroy(gameObject);
     }
-
 }

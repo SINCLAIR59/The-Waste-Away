@@ -7,9 +7,9 @@ public class PlayerScript : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float Speed = 5f;
-    public Transform boundObject; // GameObject ที่มี BoxCollider2D
-    public Vector2 minBound; // ซ้าย-ล่าง
-    public Vector2 maxBound; // ขวา-บน
+    public Transform boundObject;
+    public Vector2 minBound;
+    public Vector2 maxBound;
 
     [Header("Player Stats")]
     public float Money = 0f;
@@ -17,53 +17,45 @@ public class PlayerScript : MonoBehaviour
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
-    private readonly List<ItemScript> itemsInRange = new List<ItemScript>();
+    private readonly List<ItemScript> itemsInRange = new();
     private ItemScript nearestItem;
     private Vector2 moveInput;
 
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    void Start()
+    {
         UpdateMoneyUI();
-
-        // ✅ ดึงค่าขอบจาก BoxCollider2D ของ GameObject ที่อ้างอิง
-        if (boundObject != null)
-        {
-            BoxCollider2D box = boundObject.GetComponent<BoxCollider2D>();
-            if (box != null)
-            {
-                Vector2 center = box.bounds.center;
-                Vector2 size = box.bounds.size;
-
-                minBound = center - size / 2f;
-                maxBound = center + size / 2f;
-            }
-            else
-            {
-                Debug.LogWarning("Bound Object ไม่มี BoxCollider2D");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("ยังไม่ได้อ้างอิง Bound Object");
-        }
+        SetupBounds();
     }
 
     void Update()
     {
-        // รับ input การเคลื่อนไหว
+        HandleInput();
+        UpdateNearestItem();
+        HandlePickup();
+    }
+
+    void FixedUpdate()
+    {
+        MovePlayer();
+    }
+
+    private void HandleInput()
+    {
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
 
-        // พลิกตัวละครตามทิศทาง
         if (spriteRenderer && moveInput.x != 0)
             spriteRenderer.flipX = moveInput.x < 0;
+    }
 
-        // หา item ใกล้สุด
-        UpdateNearestItem();
-
-        // กด E เก็บของ
+    private void HandlePickup()
+    {
         if (nearestItem != null && Input.GetKeyDown(KeyCode.E))
         {
             nearestItem.PickUpItem();
@@ -71,24 +63,40 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    private void MovePlayer()
     {
-        // เคลื่อนที่เฉพาะตอนมี input
-        if (moveInput.sqrMagnitude > 0)
-        {
-            Vector2 move = moveInput.normalized * Speed * Time.fixedDeltaTime;
-            Vector2 newPos = rb.position + move;
-
-            // จำกัดไม่ให้ออกนอกขอบ
-            newPos.x = Mathf.Clamp(newPos.x, minBound.x, maxBound.x);
-            newPos.y = Mathf.Clamp(newPos.y, minBound.y, maxBound.y);
-
-            rb.MovePosition(newPos);
-        }
-        else
+        if (moveInput.sqrMagnitude <= 0)
         {
             rb.linearVelocity = Vector2.zero;
+            return;
         }
+
+        Vector2 move = moveInput.normalized * Speed * Time.fixedDeltaTime;
+        Vector2 newPos = rb.position + move;
+        newPos.x = Mathf.Clamp(newPos.x, minBound.x, maxBound.x);
+        newPos.y = Mathf.Clamp(newPos.y, minBound.y, maxBound.y);
+        rb.MovePosition(newPos);
+    }
+
+    private void SetupBounds()
+    {
+        if (boundObject == null)
+        {
+            Debug.LogWarning("ยังไม่ได้อ้างอิง Bound Object");
+            return;
+        }
+
+        BoxCollider2D box = boundObject.GetComponent<BoxCollider2D>();
+        if (box == null)
+        {
+            Debug.LogWarning("Bound Object ไม่มี BoxCollider2D");
+            return;
+        }
+
+        Vector2 center = box.bounds.center;
+        Vector2 size = box.bounds.size;
+        minBound = center - size / 2f;
+        maxBound = center + size / 2f;
     }
 
     public void UpdateMoneyUI()
@@ -99,45 +107,35 @@ public class PlayerScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other == null) return;
+        if (!other) return;
 
-        // ตรวจ Item
-        ItemScript item = other.GetComponent<ItemScript>();
-        if (item != null && !itemsInRange.Contains(item))
+        var item = other.GetComponent<ItemScript>();
+        if (item && !itemsInRange.Contains(item))
         {
             itemsInRange.Add(item);
             item.ShowUI(true);
         }
 
-        // ตรวจ SellPoint
-        SellPoint sellPoint = other.GetComponent<SellPoint>();
-        if (sellPoint != null)
-        {
+        var sellPoint = other.GetComponent<SellPoint>();
+        if (sellPoint)
             sellPoint.ShowUI(true);
-        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other == null) return;
+        if (!other) return;
 
-        // ตรวจ Item
-        ItemScript item = other.GetComponent<ItemScript>();
-        if (item != null && item.gameObject != null)
+        var item = other.GetComponent<ItemScript>();
+        if (item)
         {
             itemsInRange.Remove(item);
-            if (item != null)
-                item.ShowUI(false);
+            item.ShowUI(false);
         }
 
-        // ตรวจ SellPoint
-        SellPoint sellPoint = other.GetComponent<SellPoint>();
-        if (sellPoint != null && sellPoint.gameObject != null)
-        {
+        var sellPoint = other.GetComponent<SellPoint>();
+        if (sellPoint)
             sellPoint.ShowUI(false);
-        }
     }
-
 
     private void UpdateNearestItem()
     {
@@ -146,8 +144,8 @@ public class PlayerScript : MonoBehaviour
 
         for (int i = itemsInRange.Count - 1; i >= 0; i--)
         {
-            ItemScript item = itemsInRange[i];
-            if (item == null)
+            var item = itemsInRange[i];
+            if (!item)
             {
                 itemsInRange.RemoveAt(i);
                 continue;

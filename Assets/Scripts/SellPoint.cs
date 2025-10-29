@@ -1,23 +1,32 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Collider2D))]
 public class SellPoint : MonoBehaviour
 {
     [Header("UI Settings")]
-    public GameObject sellUI; // UI แสดงปุ่ม E หรือข้อความ "กด E เพื่อขาย"
+    [SerializeField] private GameObject sellUI;
 
-    private bool canSell = false;
+    private bool canSell;
     private Inventory playerInventory;
     private PlayerScript player;
 
-    void Start()
+    void Awake()
     {
         if (sellUI != null)
             sellUI.SetActive(false);
+    }
 
+    void Start()
+    {
+        SetupPlayerReference();
+    }
+
+    private void SetupPlayerReference()
+    {
         GameObject playerObj = GameObject.FindWithTag("Player");
         if (playerObj == null)
         {
-            Debug.LogError("ไม่พบ Player ใน Scene! ต้องตั้ง Tag = 'Player'");
+            Debug.LogError("❌ ไม่พบ Player ใน Scene! ต้องตั้ง Tag = 'Player'");
             return;
         }
 
@@ -25,7 +34,9 @@ public class SellPoint : MonoBehaviour
         player = playerObj.GetComponent<PlayerScript>();
 
         if (player == null)
-            Debug.LogError("PlayerScript ไม่พบบน Player!");
+            Debug.LogError("❌ PlayerScript ไม่พบบน Player!");
+        if (playerInventory == null)
+            Debug.LogError("❌ Inventory ไม่พบบน Player!");
     }
 
     public void ShowUI(bool state)
@@ -37,44 +48,45 @@ public class SellPoint : MonoBehaviour
     void Update()
     {
         if (canSell && Input.GetKeyDown(KeyCode.E))
-        {
             SellAllItems();
-        }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
-
         canSell = true;
         ShowUI(true);
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    private void OnTriggerExit2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
-
         canSell = false;
         ShowUI(false);
     }
 
-    void SellAllItems()
+    private void SellAllItems()
     {
         if (playerInventory == null || player == null) return;
 
         float totalPrice = 0f;
         foreach (Item item in playerInventory.Items)
         {
+            if (item == null) continue;
             totalPrice += item.price * item.quantity;
+        }
+
+        if (totalPrice <= 0f)
+        {
+            Debug.Log("ไม่มีของให้ขาย");
+            return;
         }
 
         player.Money += totalPrice;
         player.UpdateMoneyUI();
 
-        Debug.Log($"ขายของทั้งหมดได้ {totalPrice:F2} บาท");
-
         playerInventory.ClearInventory();
-        playerInventory.UpdateWeightUI();
-    }
 
+        Debug.Log($"✅ ขายของทั้งหมดได้เงิน {totalPrice:F2} บาท");
+    }
 }

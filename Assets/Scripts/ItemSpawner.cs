@@ -13,14 +13,13 @@ public class SpawnItem
 public class ItemSpawner : MonoBehaviour
 {
     [Header("ตั้งค่า Item ที่จะสุ่ม")]
-    public SpawnItem[] items;
+    [SerializeField] private SpawnItem[] items;
 
     [Header("พื้นที่สุ่ม (SpriteRenderer หรือ Collider2D)")]
-    public GameObject spawnArea;
+    [SerializeField] private GameObject spawnArea;
 
     [Header("จำนวน Item ที่จะสุ่มวาง")]
-    [Min(1)]
-    public int spawnCount = 10;
+    [SerializeField, Min(1)] private int spawnCount = 10;
 
     private Vector2 spawnAreaMin;
     private Vector2 spawnAreaMax;
@@ -33,21 +32,21 @@ public class ItemSpawner : MonoBehaviour
             return;
         }
 
-        if (spawnArea != null)
-            CalculateSpawnArea();
-        else
-        {
-            Debug.LogWarning("⚠️ Spawn Area ยังไม่ได้ตั้งค่า — ใช้ค่าเริ่มต้นแทน");
-            spawnAreaMin = new Vector2(-10, -5);
-            spawnAreaMax = new Vector2(10, 5);
-        }
-
+        CalculateSpawnArea();
         SpawnItemsOnStart();
     }
 
     private void CalculateSpawnArea()
     {
-        // 🔹 1) ถ้ามี SpriteRenderer
+        if (spawnArea == null)
+        {
+            Debug.LogWarning("⚠️ Spawn Area ยังไม่ได้ตั้งค่า — ใช้ค่าเริ่มต้นแทน");
+            spawnAreaMin = new Vector2(-10, -5);
+            spawnAreaMax = new Vector2(10, 5);
+            return;
+        }
+
+        // 1️⃣ ถ้ามี SpriteRenderer
         if (spawnArea.TryGetComponent<SpriteRenderer>(out var sr))
         {
             Bounds bounds = sr.bounds;
@@ -56,7 +55,7 @@ public class ItemSpawner : MonoBehaviour
             return;
         }
 
-        // 🔹 2) ถ้ามี Collider2D
+        // 2️⃣ ถ้ามี Collider2D
         if (spawnArea.TryGetComponent<Collider2D>(out var col))
         {
             Bounds bounds = col.bounds;
@@ -65,7 +64,7 @@ public class ItemSpawner : MonoBehaviour
             return;
         }
 
-        // 🔹 3) ไม่มีทั้งคู่ → ใช้ตำแหน่งกลางจำลอง
+        // 3️⃣ ไม่มีทั้งคู่ → ใช้ตำแหน่งกลางจำลอง
         Vector2 center = spawnArea.transform.position;
         spawnAreaMin = center - new Vector2(10, 5);
         spawnAreaMax = center + new Vector2(10, 5);
@@ -95,7 +94,7 @@ public class ItemSpawner : MonoBehaviour
 
     private GameObject GetRandomItem()
     {
-        if (items.Length == 0) return null;
+        if (items == null || items.Length == 0) return null;
 
         float totalRate = 0f;
         foreach (var item in items)
@@ -112,7 +111,7 @@ public class ItemSpawner : MonoBehaviour
 
         foreach (var item in items)
         {
-            cumulative += item.spawnRate;
+            cumulative += Mathf.Max(0, item.spawnRate);
             if (randomPoint <= cumulative)
                 return item.prefab;
         }
