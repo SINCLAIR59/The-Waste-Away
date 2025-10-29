@@ -20,24 +20,31 @@ public class PlayerScript : MonoBehaviour
     private readonly List<ItemScript> itemsInRange = new();
     private ItemScript nearestItem;
     private Vector2 moveInput;
+    private ContactFilter2D collisionFilter;
+    private readonly RaycastHit2D[] raycastHits = new RaycastHit2D[1];
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // ตั้งค่า Filter สำหรับตรวจการชนล่วงหน้า (สร้างครั้งเดียว)
+        collisionFilter.useLayerMask = true;
+        collisionFilter.SetLayerMask(LayerMask.GetMask("Obstacle"));
+        collisionFilter.useTriggers = false;
     }
 
     void Start()
     {
-        UpdateMoneyUI();
         SetupBounds();
+        UpdateMoneyUI();
     }
 
     void Update()
     {
         HandleInput();
-        UpdateNearestItem();
         HandlePickup();
+        UpdateNearestItem();
     }
 
     void FixedUpdate()
@@ -50,7 +57,7 @@ public class PlayerScript : MonoBehaviour
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
 
-        if (spriteRenderer && moveInput.x != 0)
+        if (moveInput.x != 0)
             spriteRenderer.flipX = moveInput.x < 0;
     }
 
@@ -65,7 +72,7 @@ public class PlayerScript : MonoBehaviour
 
     private void MovePlayer()
     {
-        if (moveInput.sqrMagnitude <= 0)
+        if (moveInput == Vector2.zero)
         {
             rb.linearVelocity = Vector2.zero;
             return;
@@ -73,51 +80,55 @@ public class PlayerScript : MonoBehaviour
 
         Vector2 move = moveInput.normalized * Speed * Time.fixedDeltaTime;
         Vector2 newPos = rb.position + move;
+
+        // จำกัดขอบแมพ
         newPos.x = Mathf.Clamp(newPos.x, minBound.x, maxBound.x);
         newPos.y = Mathf.Clamp(newPos.y, minBound.y, maxBound.y);
-        rb.MovePosition(newPos);
+
+        // ตรวจการชน
+        int hitCount = rb.Cast(move.normalized, collisionFilter, raycastHits, move.magnitude);
+        if (hitCount == 0)
+            rb.MovePosition(newPos);
     }
 
     private void SetupBounds()
     {
-        if (boundObject == null)
+        if (!boundObject)
         {
-            Debug.LogWarning("ยังไม่ได้อ้างอิง Bound Object");
+            Debug.LogWarning("⚠️ Bound Object ยังไม่ถูกอ้างอิง");
             return;
         }
 
-        BoxCollider2D box = boundObject.GetComponent<BoxCollider2D>();
-        if (box == null)
+        if (boundObject.TryGetComponent(out BoxCollider2D box))
         {
-            Debug.LogWarning("Bound Object ไม่มี BoxCollider2D");
-            return;
+            Vector2 center = box.bounds.center;
+            Vector2 size = box.bounds.size;
+            minBound = center - size / 2f;
+            maxBound = center + size / 2f;
         }
-
-        Vector2 center = box.bounds.center;
-        Vector2 size = box.bounds.size;
-        minBound = center - size / 2f;
-        maxBound = center + size / 2f;
+        else
+        {
+            Debug.LogWarning("⚠️ Bound Object ไม่มี BoxCollider2D");
+        }
     }
 
     public void UpdateMoneyUI()
     {
-        if (MoneyUI != null)
-            MoneyUI.text = $"เงิน {Money:F2}฿ บาท";
+        if (MoneyUI)
+            MoneyUI.text = $"เงิน {Money:F2} ฿";
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other) return;
 
-        var item = other.GetComponent<ItemScript>();
-        if (item && !itemsInRange.Contains(item))
+        if (other.TryGetComponent(out ItemScript item) && !itemsInRange.Contains(item))
         {
             itemsInRange.Add(item);
             item.ShowUI(true);
         }
 
-        var sellPoint = other.GetComponent<SellPoint>();
-        if (sellPoint)
+        if (other.TryGetComponent(out SellPoint sellPoint))
             sellPoint.ShowUI(true);
     }
 
@@ -125,21 +136,19 @@ public class PlayerScript : MonoBehaviour
     {
         if (!other) return;
 
-        var item = other.GetComponent<ItemScript>();
-        if (item)
+        if (other.TryGetComponent(out ItemScript item))
         {
             itemsInRange.Remove(item);
             item.ShowUI(false);
         }
 
-        var sellPoint = other.GetComponent<SellPoint>();
-        if (sellPoint)
+        if (other.TryGetComponent(out SellPoint sellPoint))
             sellPoint.ShowUI(false);
     }
 
     private void UpdateNearestItem()
     {
-        float nearestDist = Mathf.Infinity;
+        float nearestDist = float.MaxValue;
         ItemScript closest = null;
 
         for (int i = itemsInRange.Count - 1; i >= 0; i--)
@@ -151,13 +160,11 @@ public class PlayerScript : MonoBehaviour
                 continue;
             }
 
-            float dist = Vector2.Distance(transform.position, item.transform.position);
+            float dist = Vector2.SqrMagnitude(item.transform.position - transform.position);
             if (dist < nearestDist)
             {
                 nearestDist = dist;
                 closest = item;
-
-                if (nearestDist <= 0.05f) break;
             }
         }
 
