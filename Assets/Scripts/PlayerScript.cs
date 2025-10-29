@@ -7,6 +7,9 @@ public class PlayerScript : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float Speed = 5f;
+    public Transform boundObject; // GameObject ที่มี BoxCollider2D
+    public Vector2 minBound; // ซ้าย-ล่าง
+    public Vector2 maxBound; // ขวา-บน
 
     [Header("Player Stats")]
     public float Money = 0f;
@@ -23,6 +26,28 @@ public class PlayerScript : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         UpdateMoneyUI();
+
+        // ✅ ดึงค่าขอบจาก BoxCollider2D ของ GameObject ที่อ้างอิง
+        if (boundObject != null)
+        {
+            BoxCollider2D box = boundObject.GetComponent<BoxCollider2D>();
+            if (box != null)
+            {
+                Vector2 center = box.bounds.center;
+                Vector2 size = box.bounds.size;
+
+                minBound = center - size / 2f;
+                maxBound = center + size / 2f;
+            }
+            else
+            {
+                Debug.LogWarning("Bound Object ไม่มี BoxCollider2D");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("ยังไม่ได้อ้างอิง Bound Object");
+        }
     }
 
     void Update()
@@ -48,10 +73,22 @@ public class PlayerScript : MonoBehaviour
 
     void FixedUpdate()
     {
+        // เคลื่อนที่เฉพาะตอนมี input
         if (moveInput.sqrMagnitude > 0)
-            rb.linearVelocity = moveInput.normalized * Speed;
+        {
+            Vector2 move = moveInput.normalized * Speed * Time.fixedDeltaTime;
+            Vector2 newPos = rb.position + move;
+
+            // จำกัดไม่ให้ออกนอกขอบ
+            newPos.x = Mathf.Clamp(newPos.x, minBound.x, maxBound.x);
+            newPos.y = Mathf.Clamp(newPos.y, minBound.y, maxBound.y);
+
+            rb.MovePosition(newPos);
+        }
         else
+        {
             rb.linearVelocity = Vector2.zero;
+        }
     }
 
     public void UpdateMoneyUI()
