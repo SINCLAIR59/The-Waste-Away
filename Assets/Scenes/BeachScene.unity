@@ -415,6 +415,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1092339381}
+  - {fileID: 2105948132}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &519420033
@@ -2176,10 +2177,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a0e007c2af012741b6b7893da1d3376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTimeUI
-  timeScale: 60
+  timeScale: 3000
   startHour: 6
   startMinute: 0
   timeText: {fileID: 1113491951}
+  globalLight: {fileID: 619394801}
+  minIntensity: 0.25
+  maxIntensity: 1
 --- !u!4 &2105948132
 Transform:
   m_ObjectHideFlags: 0
@@ -2188,12 +2192,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2105948130}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -37.35608, y: -8.91365, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -6.856079, y: 3.5863504, z: 15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 519420032}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -2210,4 +2214,3 @@ SceneRoots:
   - {fileID: 1230819355}
   - {fileID: 1024608133}
   - {fileID: 697525926}
-  - {fileID: 2105948132}
