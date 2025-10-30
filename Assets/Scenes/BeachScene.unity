@@ -1336,6 +1336,7 @@ GameObject:
   - component: {fileID: 1150408305}
   - component: {fileID: 1150408309}
   - component: {fileID: 1150408310}
+  - component: {fileID: 1150408311}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1386,6 +1387,9 @@ MonoBehaviour:
   boundObject: {fileID: 1284442156}
   minBound: {x: 0, y: 0}
   maxBound: {x: 0, y: 0}
+  PlayerMoveX: 0
+  PlayerMoveY: 0
+  animator: {fileID: 1150408311}
   Money: 10
   MoneyUI: {fileID: 770154858}
 --- !u!212 &1150408307
@@ -1435,7 +1439,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 8634195880896693363, guid: 67992d9f300b4c648a24830d3dd5812b, type: 3}
+  m_Sprite: {fileID: 5088316998373936774, guid: 4607ced4a190a354fab9bb4ecd573540, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1512,6 +1516,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
   maxWeight: 10
   WeightUI: {fileID: 1720749560}
+--- !u!95 &1150408311
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1150408304}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2bb3e42731e3aca49bf46f4a65103f40, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1230819353
 GameObject:
   m_ObjectHideFlags: 0
@@ -2397,16 +2423,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a0e007c2af012741b6b7893da1d3376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTimeUI
-  timeScale: 90000
+  timeScale: 120
   startHour: 6
   startMinute: 0
   startDay: 1
+  HourNow: 0
+  minuteNow: 0
   timeText: {fileID: 1113491951}
   dateText: {fileID: 880548782}
   globalLight: {fileID: 619394801}
   minIntensity: 0.1
   maxIntensity: 1
   itemSpawner: {fileID: 0}
+  Spawner: 0
 --- !u!4 &2105948132
 Transform:
   m_ObjectHideFlags: 0

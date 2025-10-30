@@ -9,6 +9,8 @@ public class GameTimeUI : MonoBehaviour
     public int startHour = 6;
     public int startMinute = 0;
     public int startDay = 1;
+    public int HourNow;
+    public int minuteNow;
 
     [Header("UI Settings")]
     public TMP_Text timeText;
@@ -16,11 +18,14 @@ public class GameTimeUI : MonoBehaviour
 
     [Header("2D Light Settings")]
     public Light2D globalLight;
-    [Range(0f, 1f)] public float minIntensity = 0.2f;
+    [Range(0f, 1f)] public float minIntensity = 0.1f;
     [Range(0f, 1f)] public float maxIntensity = 1f;
 
     [Header("Reference")]
-    public ItemSpawner itemSpawner; // 👈 อ้างถึง ItemSpawner
+    public ItemSpawner itemSpawner;
+
+    [Header("For Tester")]
+    public bool Spawner; 
 
     private float elapsedTime;
     private int currentDay;
@@ -40,19 +45,22 @@ public class GameTimeUI : MonoBehaviour
         int minute = (totalSeconds / 60) % 60;
         int newDay = startDay + (totalSeconds / 86400); // 86400 = 24 * 3600
 
-        // 🔄 ตรวจวันเปลี่ยน
+        //ตรวจวันเปลี่ยน
         if (newDay != currentDay)
         {
             currentDay = newDay;
             Debug.Log($"New Day: {currentDay}");
 
-            // 👇 ค้นหาและเรียกใช้ทุก ItemSpawner ในฉาก
-            ItemSpawner[] spawners = FindObjectsByType<ItemSpawner>(FindObjectsSortMode.None);
-            foreach (ItemSpawner spawner in spawners)
-            {
-                spawner.SendMessage("Start"); // หรือ spawner.SpawnItemsOnStart() ถ้า method เป็น public
+            //ค้นหาและเรียกใช้ทุก ItemSpawner ในฉาก
+            if(Spawner == true) {
+                ItemSpawner[] spawners = FindObjectsByType<ItemSpawner>(FindObjectsSortMode.None);
+                foreach (ItemSpawner spawner in spawners)
+                {
+                    spawner.SendMessage("Start"); // หรือ spawner.SpawnItemsOnStart() ถ้า method เป็น public
+                }
+                //Debug.Log($"เรียก ItemSpawner ใหม่ทั้งหมด {spawners.Length} ตัวในฉาก");
             }
-            //Debug.Log($"🔁 เรียก ItemSpawner ใหม่ทั้งหมด {spawners.Length} ตัวในฉาก");
+
         }
 
         // UI แสดงเวลา + วัน
@@ -60,6 +68,9 @@ public class GameTimeUI : MonoBehaviour
             timeText.text = $"{hour:00}:{minute:00}";
         if (dateText != null)
             dateText.text = $"Day {currentDay}";
+        HourNow = hour;
+        minuteNow = minute;
+
 
         // ปรับแสง
         float targetIntensity;
@@ -79,7 +90,7 @@ public class GameTimeUI : MonoBehaviour
         }
         else
         {
-            targetIntensity = 0.25f;
+            targetIntensity = minIntensity;
         }
 
         if (globalLight != null)

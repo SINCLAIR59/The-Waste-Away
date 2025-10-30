@@ -10,6 +10,9 @@ public class PlayerScript : MonoBehaviour
     public Transform boundObject;
     public Vector2 minBound;
     public Vector2 maxBound;
+    public float PlayerMoveX;
+    public float PlayerMoveY;
+    [SerializeField] private Animator animator;
 
     [Header("Player Stats")]
     public float Money = 0f;
@@ -22,6 +25,7 @@ public class PlayerScript : MonoBehaviour
     private Vector2 moveInput;
     private ContactFilter2D collisionFilter;
     private readonly RaycastHit2D[] raycastHits = new RaycastHit2D[1];
+    
 
     void Awake()
     {
@@ -45,6 +49,13 @@ public class PlayerScript : MonoBehaviour
         HandleInput();
         HandlePickup();
         UpdateNearestItem();
+        if (PlayerMoveX != 0 || PlayerMoveY != 0)
+        {
+            animator.SetBool("isRuning", true);
+        }
+        else {
+            animator.SetBool("isRuning", false);
+        }
     }
 
     void FixedUpdate()
@@ -56,6 +67,8 @@ public class PlayerScript : MonoBehaviour
     {
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
+        PlayerMoveX = moveInput.x;
+        PlayerMoveY = moveInput.y;
 
         if (moveInput.x != 0)
             spriteRenderer.flipX = moveInput.x < 0;
