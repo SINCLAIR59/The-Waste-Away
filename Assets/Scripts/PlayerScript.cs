@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerScript : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float Speed = 5f;
+    public float Speed = 10f;
     public Transform boundObject;
     public Vector2 minBound;
     public Vector2 maxBound;

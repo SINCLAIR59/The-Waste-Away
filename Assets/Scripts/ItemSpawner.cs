@@ -71,7 +71,8 @@ public class ItemSpawner : MonoBehaviour
         Debug.LogWarning("⚠️ spawnArea ไม่มี SpriteRenderer หรือ Collider2D ใช้ขอบเขตจำลองแทน");
     }
 
-    private void SpawnItemsOnStart()
+    // ✅ เปลี่ยนจาก private → public เพื่อให้ GameTimeUI เรียกได้
+    public void SpawnItemsOnStart()
     {
         int spawned = 0;
 
@@ -89,7 +90,7 @@ public class ItemSpawner : MonoBehaviour
             spawned++;
         }
 
-        Debug.Log($"✅ สร้าง Item แล้วทั้งหมด {spawned}/{spawnCount} ชิ้น");
+        Debug.Log($"สร้าง Item แล้วทั้งหมด {spawned}/{spawnCount} ชิ้น");
     }
 
     private GameObject GetRandomItem()
@@ -98,7 +99,7 @@ public class ItemSpawner : MonoBehaviour
 
         float totalRate = 0f;
         foreach (var item in items)
-            totalRate += Mathf.Max(0, item.spawnRate); // ป้องกันค่าติดลบ
+            totalRate += Mathf.Max(0, item.spawnRate);
 
         if (totalRate <= 0f)
         {
