@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7519991716199109876}
   - component: {fileID: 2836871179956861315}
   m_Layer: 0
-  m_Name: Item
+  m_Name: glass bottle
   m_TagString: Item
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4089648478987721205}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.001435, y: -6.575793, z: 0}
+  m_LocalPosition: {x: -6.61, y: -19.13, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -79,10 +79,10 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -411867485
+  m_SortingLayer: 2
   m_SortingOrder: 1
-  m_Sprite: {fileID: 5225380454210030592, guid: 3d9f339c1cb743447b4655bfc29c54c8, type: 3}
+  m_Sprite: {fileID: 2384826977753428710, guid: cf9564a4deceddb49a983fb15b38b95b, type: 3}
   m_Color: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -92,7 +92,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!58 &7519991716199109876
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -141,10 +141,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9bee3826d96a6f4bbd4dccb086d393f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemScript
-  ItemName: qwerty
-  weight: 0.05
+  ItemName: glass bottle
+  weight: 0.6
   quantity: 1
-  pricePerKg: 10
+  pricePerKg: 25
   interactUI: {fileID: 4723397358126597678}
 --- !u!1 &4723397358126597678
 GameObject:
@@ -206,7 +206,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: -411867485
   m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &972005392980815768

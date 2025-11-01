@@ -81,9 +81,10 @@ public class ItemSpawner : MonoBehaviour
             GameObject selectedItem = GetRandomItem();
             if (selectedItem == null) continue;
 
-            Vector2 randomPos = new Vector2(
+            Vector3 randomPos = new Vector3(
                 Random.Range(spawnAreaMin.x, spawnAreaMax.x),
-                Random.Range(spawnAreaMin.y, spawnAreaMax.y)
+                Random.Range(spawnAreaMin.y, spawnAreaMax.y),
+                Random.Range(-300,300)
             );
 
             Instantiate(selectedItem, randomPos, Quaternion.identity);

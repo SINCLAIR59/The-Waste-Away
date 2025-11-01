@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 6f806fdd8c1a618458b6193aab54ba2f
+guid: 8a433f2262824da49acaf8e42b02c05e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7649392610059262065
-    second: chairA_0
+      213: -1746341910262493289
+    second: water bottle_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: chairA_0
+      name: water bottle_0
       rect:
         serializedVersion: 2
-        x: 37
-        y: 38
-        width: 637
-        height: 569
-      alignment: 9
-      pivot: {x: 0.5012914, y: 0.015727581}
+        x: 27
+        y: 27
+        width: 241
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1789416fc0a182a60800000000000000
-      internalID: 7649392610059262065
+      spriteID: 79f4d6ef84fb3c7e0800000000000000
+      internalID: -1746341910262493289
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: f90814238e98a3e47b1a2c9905415f45
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      chairA_0: 7649392610059262065
+      water bottle_0: -1746341910262493289
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
